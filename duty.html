@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Duty Roster - Full Month Screenshot</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 16px;
+        }
+
+        .control-panel {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .month-selector {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        input[type="month"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+
+        .btn-warning {
+            background: #ed8936;
+        }
+
+        .btn-warning:hover {
+            background: #dd6b20;
+        }
+
+        .first-days-section {
+            background: #fff;
+            border: 2px dashed #cbd5e0;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .day-input {
+            text-align: center;
+        }
+
+        .day-input label {
+            font-size: 12px;
+            color: #718096;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .day-input select {
+            width: 100%;
+            padding: 10px 4px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+            background: white;
+            text-align: center;
+        }
+
+        .day-input select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .roster-container {
+            background: white;
+            border-radius: 16px;
+            border: 2px solid #e0e0e0;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .roster-header {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .roster-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 11px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+
+        .roster-grid {
+            display: grid;
+            grid-template-columns: 60px 1fr 80px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .grid-header {
+            background: #f1f3f5;
+            padding: 10px 6px;
+            font-weight: 600;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 12px;
+        }
+
+        .date-cell {
+            padding: 10px 6px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .duty-cell {
+            padding: 10px 6px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .day-cell {
+            padding: 10px 4px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            text-align: center;
+            font-size: 11px;
+            color: #718096;
+        }
+
+        /* Duty type colors */
+        .duty-morning { background: #fef3c7; color: #92400e; }
+        .duty-evening { background: #c7d2fe; color: #3730a3; }
+        .duty-night { background: #1e293b; color: white; }
+        .duty-sleeping { background: #e9d5ff; color: #6b21a8; }
+        .duty-off { background: #dcfce7; color: #166534; }
+
+        .manual-badge {
+            background: #fbbf24;
+            color: #000;
+            font-size: 9px;
+            padding: 2px 4px;
+            border-radius: 8px;
+            margin-left: 4px;
+        }
+
+        .auto-badge {
+            background: #a0aec0;
+            color: white;
+            font-size: 9px;
+            padding: 2px 4px;
+            border-radius: 8px;
+            margin-left: 4px;
+        }
+
+        .summary-stats {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 16px 0 8px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 8px;
+            font-size: 13px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            min-width: 50px;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 18px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 11px;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 480px) {
+            .days-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .roster-grid {
+                grid-template-columns: 45px 1fr 70px;
+                font-size: 11px;
+            }
+            
+            .legend {
+                font-size: 9px;
+            }
+        }
+
+        /* SCREENSHOT MODE - SHOW FULL ROSTER WITHOUT SCROLL */
+        .screenshot-mode .control-panel,
+        .screenshot-mode .btn,
+        .screenshot-mode .legend,
+        .screenshot-mode .first-days-section {
+            display: none;
+        }
+
+        .screenshot-mode .roster-grid {
+            max-height: none;
+            overflow-y: visible;
+            height: auto;
+            display: grid;
+        }
+        
+        .screenshot-mode .roster-container {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 0;
+            height: auto;
+            overflow: visible;
+        }
+        
+        .screenshot-mode .header {
+            padding: 12px;
+        }
+        
+        .screenshot-mode .header p {
+            display: none;
+        }
+        
+        .screenshot-mode .summary-stats {
+            display: flex;
+            margin: 8px 0 0;
+        }
+        
+        .screenshot-mode .content {
+            padding: 8px;
+        }
+        
+        /* Ensure full table is visible in screenshot */
+        .screenshot-mode .roster-grid .grid-header {
+            position: relative;
+        }
+        
+        /* Make the container height auto to show everything */
+        .screenshot-mode .container {
+            height: auto;
+            overflow: visible;
+        }
+        
+        .screenshot-mode body {
+            background: white;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="rosterContainer">
+        <div class="header">
+            <h1>📋 Duty Roster</h1>
+            <p>Fill first 12 days → Auto-generate the rest</p>
+        </div>
+
+        <div class="content">
+            <div class="control-panel">
+                <div class="input-group">
+                    <label>Select Month</label>
+                    <div class="month-selector">
+                        <input type="month" id="monthSelect" value="2024-01">
+                    </div>
+                </div>
+
+                <div class="first-days-section">
+                    <div class="section-title">
+                        <span>📝 First 12 Days of Month</span>
+                        <span style="font-size: 11px; color: #718096;">(Fill these manually)</span>
+                    </div>
+                    
+                    <div class="days-grid" id="firstDaysInput">
+                        <!-- First 12 days inputs will be generated here by JavaScript -->
+                    </div>
+                    
+                    <button class="btn btn-warning" onclick="clearFirstDays()" style="font-size: 14px; padding: 8px;">
+                        <span>🔄</span> Reset to Default Pattern
+                    </button>
+                </div>
+
+                <button class="btn" onclick="generateRoster()">
+                    <span>⚡</span> Generate Full Month
+                </button>
+                
+                <button class="btn btn-secondary" onclick="takeFullPageScreenshot()">
+                    <span>📸</span> Screenshot Full Month
+                </button>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background: #fef3c7;"></span> Morning</div>
+                <div class="legend-item"><span class="legend-color" style="background: #c7d2fe;"></span> Evening</div>
+                <div class="legend-item"><span class="legend-color" style="background: #1e293b;"></span> Night</div>
+                <div class="legend-item"><span class="legend-color" style="background: #e9d5ff;"></span> Sleeping</div>
+                <div class="legend-item"><span class="legend-color" style="background: #dcfce7;"></span> Day Off</div>
+            </div>
+
+            <div id="rosterDisplay" class="roster-container">
+                <div class="roster-header">
+                    <span class="roster-title" id="monthTitle">January 2024</span>
+                    <span style="font-size: 12px; background: #e2e8f0; padding: 4px 8px; border-radius: 16px;">
+                        <span style="color: #fbbf24;">●</span> Manual 
+                        <span style="color: #a0aec0; margin-left: 6px;">○</span> Auto
+                    </span>
+                </div>
+                <div class="roster-grid" id="rosterGrid">
+                    <!-- Roster will be generated here -->
+                </div>
+            </div>
+            
+            <div class="summary-stats" id="summaryStats">
+                <!-- Summary stats will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        const DUTY_OPTIONS = ['Evening', 'Morning', 'Night', 'Sleeping', 'Off'];
+        
+        // Default pattern for first 12 days (your standard cycle)
+        const DEFAULT_PATTERN = [
+            'Evening', 'Morning', 'Evening', 'Morning', 'Evening', 'Morning',
+            'Night', 'Night', 'Night', 'Sleeping', 'Off', 'Off'
+        ];
+
+        // Create inputs for first 12 days
+        function createFirstDaysInputs() {
+            const container = document.getElementById('firstDaysInput');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 12; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day-input';
+                
+                const label = document.createElement('label');
+                label.textContent = `Day ${i}`;
+                
+                const select = document.createElement('select');
+                select.id = `day${i}`;
+                select.setAttribute('onchange', 'generateRoster()');
+                
+                DUTY_OPTIONS.forEach(duty => {
+                    const option = document.createElement('option');
+                    option.value = duty;
+                    option.textContent = duty;
+                    if (duty === DEFAULT_PATTERN[i-1]) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+                
+                dayDiv.appendChild(label);
+                dayDiv.appendChild(select);
+                container.appendChild(dayDiv);
+            }
+        }
+
+        // Clear/reset first days inputs
+        function clearFirstDays() {
+            for (let i = 1; i <= 12; i++) {
+                const select = document.getElementById(`day${i}`);
+                if (select) {
+                    select.value = DEFAULT_PATTERN[i-1];
+                }
+            }
+            generateRoster();
+        }
+
+        function getDutyClass(duty) {
+            switch(duty) {
+                case 'Morning': return 'duty-morning';
+                case 'Evening': return 'duty-evening';
+                case 'Night': return 'duty-night';
+                case 'Sleeping': return 'duty-sleeping';
+                case 'Off': return 'duty-off';
+                default: return '';
+            }
+        }
+
+        function generateRoster() {
+            const monthInput = document.getElementById('monthSelect').value;
+            
+            if (!monthInput) {
+                alert('Please select a month');
+                return;
+            }
+
+            const [year, month] = monthInput.split('-').map(Number);
+            
+            // Get manually entered first 12 days
+            const first12Days = [];
+            for (let i = 1; i <= 12; i++) {
+                const select = document.getElementById(`day${i}`);
+                if (select) {
+                    first12Days.push(select.value);
+                }
+            }
+            
+            // Get month details
+            const lastDay = new Date(year, month, 0);
+            const daysInMonth = lastDay.getDate();
+            
+            // Update month title
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('monthTitle').textContent = `${monthNames[month - 1]} ${year}`;
+
+            // Generate roster grid
+            const rosterGrid = document.getElementById('rosterGrid');
+            rosterGrid.innerHTML = '';
+
+            // Add headers
+            rosterGrid.innerHTML += `
+                <div class="grid-header" style="background: #667eea; color: white;">#</div>
+                <div class="grid-header" style="background: #667eea; color: white;">Date</div>
+                <div class="grid-header" style="background: #667eea; color: white;">Duty</div>
+            `;
+
+            // Count duties for summary
+            const dutyCount = {
+                'Morning': 0,
+                'Evening': 0,
+                'Night': 0,
+                'Sleeping': 0,
+                'Off': 0
+            };
+
+            // Generate all days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month - 1, day);
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                
+                let duty;
+                let isManual = false;
+                
+                // Use manual input for first 12 days, auto-generate for the rest
+                if (day <= 12) {
+                    duty = first12Days[day - 1];
+                    isManual = true;
+                } else {
+                    // Auto-generate based on the pattern from the first 12 days
+                    // This repeats the 12-day cycle
+                    const patternIndex = (day - 13) % 12;
+                    duty = first12Days[patternIndex];
+                }
+                
+                // Count duty
+                dutyCount[duty]++;
+                
+                // Format date
+                const dateDisplay = `${dayName} ${day}`;
+                
+                // Add badge
+                const badge = isManual ? 
+                    '<span class="manual-badge">M</span>' : 
+                    '<span class="auto-badge">A</span>';
+                
+                rosterGrid.innerHTML += `
+                    <div class="day-cell">${day}</div>
+                    <div class="date-cell">${dateDisplay}</div>
+                    <div class="duty-cell ${getDutyClass(duty)}">${duty} ${badge}</div>
+                `;
+            }
+            
+            // Update summary stats
+            updateSummaryStats(dutyCount, daysInMonth);
+        }
+        
+        function updateSummaryStats(dutyCount, totalDays) {
+            const summaryDiv = document.getElementById('summaryStats');
+            summaryDiv.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${dutyCount['Morning']}</div>
+                    <div class="stat-label">AM</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${dutyCount['Evening']}</div>
+                    <div class="stat-label">PM</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${dutyCount['Night']}</div>
+                    <div class="stat-label">Night</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${dutyCount['Sleeping']}</div>
+                    <div class="stat-label">Sleep</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${dutyCount['Off']}</div>
+                    <div class="stat-label">Off</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${totalDays}</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            `;
+        }
+
+        async function takeFullPageScreenshot() {
+            const container = document.getElementById('rosterContainer');
+            const rosterGrid = document.getElementById('rosterGrid');
+            
+            // Store original styles
+            const originalGridMaxHeight = rosterGrid.style.maxHeight;
+            const originalContainerHeight = container.style.height;
+            
+            // Add screenshot mode class
+            container.classList.add('screenshot-mode');
+            
+            // Force the roster grid to show all rows
+            rosterGrid.style.maxHeight = 'none';
+            rosterGrid.style.overflowY = 'visible';
+            
+            try {
+                // Wait for styles to apply
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Calculate total height needed
+                const rosterDisplay = document.getElementById('rosterDisplay');
+                const summaryStats = document.getElementById('summaryStats');
+                const header = document.querySelector('.header');
+                
+                // Create a temporary wrapper for screenshot
+                const screenshotCanvas = await html2canvas(container, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: false,
+                    useCORS: true,
+                    windowWidth: container.scrollWidth,
+                    windowHeight: container.scrollHeight,
+                    scrollY: 0,
+                    scrollX: 0
+                });
+
+                // Create download link
+                const monthYear = document.getElementById('monthTitle').textContent;
+                const link = document.createElement('a');
+                link.download = `duty-roster-${monthYear.replace(/ /g, '-')}-full.png`;
+                link.href = screenshotCanvas.toDataURL('image/png');
+                link.click();
+
+            } catch (error) {
+                console.error('Screenshot failed:', error);
+                alert('Failed to take screenshot. Please try again.');
+            } finally {
+                // Remove screenshot mode class
+                container.classList.remove('screenshot-mode');
+                
+                // Restore original styles
+                rosterGrid.style.maxHeight = originalGridMaxHeight || '400px';
+                rosterGrid.style.overflowY = 'auto';
+            }
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            // Set current month as default
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            document.getElementById('monthSelect').value = `${year}-${month}`;
+            
+            // Create first 12 days inputs
+            createFirstDaysInputs();
+            
+            // Generate roster
+            generateRoster();
+        };
+    </script>
+</body>
+</html>
